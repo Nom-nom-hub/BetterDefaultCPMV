@@ -307,10 +307,7 @@ Apache 2.0 - See LICENSE file for details
 
 ## Support
 
-- Issues: https://github.com/betterdefaultcpmv/better-cp/issues
-- Discussions: https://github.com/betterdefaultcpmv/better-cp/discussions
-- Email: support@betterdefaultcpmv.org
+- Issues: https://github.com/nom-nom-hub/BetterDefaultCPMV/issues
+- Discussions: https://github.com/nom-nom-hub/BetterDefaultCPMV/discussions
 
----
 
-**Status**: 🎉 Phase 1 MVP Complete and Production-Ready. Version 0.2.0 release preparation in progress.
