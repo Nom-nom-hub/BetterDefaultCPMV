@@ -3,10 +3,13 @@ name = "better-cp"
 version = "0.2.0"
 edition = "2021"
 authors = ["BetterDefaultCPMV Team"]
-description = "Modern replacement for cp/mv with progress, safety, and resume"
+description = "Modern replacement for cp/mv with progress reporting, safety guarantees, resumable transfers, and intelligent optimizations"
 repository = "https://github.com/nom-nom-hub/BetterDefaultCPMV"
 readme = "README.md"
 license = "Apache-2.0"
+keywords = ["cp", "mv", "copy", "move", "cli"]
+categories = ["command-line-utilities"]
+exclude = [".github", "docs", "tests", "release", "SESSION_*.md", "PROGRESS_REPORT.md", "PHASE_*.md"]
 
 [[bin]]
 name = "better-cp"
