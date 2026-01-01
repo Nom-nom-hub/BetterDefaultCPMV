@@ -1,0 +1,40 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+Cargo.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+
+# Build artifacts
+dist/
+build/
+
+# Environment
+.env
+.env.local
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Test data
+test_data/
+*.tmp
+
+# Development/Internal Documentation (do not commit)
+SESSION_*.md
+PROGRESS_REPORT.md
+PHASE_1_STATUS.md
+PHASE_1_COMPLETE.md
+IMPLEMENTATION_PROGRESS.md
+EXECUTIVE_SUMMARY.md
+FINAL_STATUS.md
+RELEASE_CHECKLIST.md
