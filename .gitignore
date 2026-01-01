@@ -1,10 +1,10 @@
-# Rust
+# === Rust Build ===
 /target/
 **/*.rs.bk
 *.pdb
 Cargo.lock
 
-# IDE
+# === IDE & Editor ===
 .idea/
 .vscode/
 *.swp
@@ -12,24 +12,38 @@ Cargo.lock
 *~
 .DS_Store
 *.iml
+*.code-workspace
 
-# Build artifacts
+# === Build Artifacts ===
 dist/
 build/
+*.a
+*.so
+*.dylib
 
-# Environment
+# === Environment & Secrets ===
 .env
 .env.local
+.env.*.local
+*.pem
+*.key
 
-# OS
+# === OS Files ===
 Thumbs.db
 .DS_Store
+.AppleDouble
+.LSOverride
+Desktop.ini
 
-# Test data
+# === Test Data & Temporary Files ===
 test_data/
+/tests/temp/
+/tests/fixtures/temp/
 *.tmp
+*.temp
 
-# Development/Internal Documentation (do not commit)
+# === Development/Internal Documentation (do not commit) ===
+# Session reports and progress tracking
 SESSION_*.md
 PROGRESS_REPORT.md
 PHASE_1_STATUS.md
@@ -38,3 +52,9 @@ IMPLEMENTATION_PROGRESS.md
 EXECUTIVE_SUMMARY.md
 FINAL_STATUS.md
 RELEASE_CHECKLIST.md
+
+# === Keep These (do not ignore) ===
+# .github/          - GitHub Actions workflows (COMMITTED)
+# LICENSE           - License file (COMMITTED)
+# docs/             - GitHub Pages documentation (COMMITTED)
+# release/          - Release package templates (COMMITTED)

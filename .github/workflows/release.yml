@@ -1,0 +1,139 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: BetterDefaultCPMV ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    needs: create-release
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: dtolnay/rust-toolchain@stable
+      
+      - uses: Swatinem/rust-cache@v2
+      
+      - name: Build release
+        run: cargo build --release
+      
+      - name: Create artifact directory
+        run: |
+          mkdir -p BetterDefaultCPMV-linux/bin
+          cp target/release/better-cp BetterDefaultCPMV-linux/bin/
+          cp target/release/better-mv BetterDefaultCPMV-linux/bin/
+          cp README.md BetterDefaultCPMV-linux/
+          cp CHANGELOG.md BetterDefaultCPMV-linux/
+          cp LICENSE BetterDefaultCPMV-linux/
+      
+      - name: Create archive
+        run: tar -czf BetterDefaultCPMV-v${{ github.ref_name }}-linux.tar.gz BetterDefaultCPMV-linux/
+      
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./BetterDefaultCPMV-v${{ github.ref_name }}-linux.tar.gz
+          asset_name: BetterDefaultCPMV-v${{ github.ref_name }}-linux.tar.gz
+          asset_content_type: application/gzip
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    needs: create-release
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: dtolnay/rust-toolchain@stable
+      
+      - uses: Swatinem/rust-cache@v2
+      
+      - name: Build release
+        run: cargo build --release
+      
+      - name: Create artifact directory
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Path "BetterDefaultCPMV-windows\bin" -Force
+          Copy-Item "target\release\better-cp.exe" "BetterDefaultCPMV-windows\bin\"
+          Copy-Item "target\release\better-mv.exe" "BetterDefaultCPMV-windows\bin\"
+          Copy-Item "README.md" "BetterDefaultCPMV-windows\"
+          Copy-Item "CHANGELOG.md" "BetterDefaultCPMV-windows\"
+          Copy-Item "LICENSE" "BetterDefaultCPMV-windows\"
+      
+      - name: Create archive
+        shell: powershell
+        run: |
+          Compress-Archive -Path "BetterDefaultCPMV-windows" -DestinationPath "BetterDefaultCPMV-v${{ github.ref_name }}-windows.zip"
+      
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./BetterDefaultCPMV-v${{ github.ref_name }}-windows.zip
+          asset_name: BetterDefaultCPMV-v${{ github.ref_name }}-windows.zip
+          asset_content_type: application/zip
+
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+    needs: create-release
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: dtolnay/rust-toolchain@stable
+      
+      - uses: Swatinem/rust-cache@v2
+      
+      - name: Build release
+        run: cargo build --release
+      
+      - name: Create artifact directory
+        run: |
+          mkdir -p BetterDefaultCPMV-macos/bin
+          cp target/release/better-cp BetterDefaultCPMV-macos/bin/
+          cp target/release/better-mv BetterDefaultCPMV-macos/bin/
+          cp README.md BetterDefaultCPMV-macos/
+          cp CHANGELOG.md BetterDefaultCPMV-macos/
+          cp LICENSE BetterDefaultCPMV-macos/
+      
+      - name: Create archive
+        run: tar -czf BetterDefaultCPMV-v${{ github.ref_name }}-macos.tar.gz BetterDefaultCPMV-macos/
+      
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./BetterDefaultCPMV-v${{ github.ref_name }}-macos.tar.gz
+          asset_name: BetterDefaultCPMV-v${{ github.ref_name }}-macos.tar.gz
+          asset_content_type: application/gzip
