@@ -19,13 +19,13 @@
             --primary-light: #818cf8;
             --secondary: #8b5cf6;
             --accent: #ec4899;
-            --dark: #0f172a;
-            --darker: #020617;
-            --light: #f1f5f9;
-            --lighter: #f8fafc;
-            --text: #334155;
-            --text-light: #64748b;
-            --border: #e2e8f0;
+            --dark: #0a0e27;
+            --darker: #050812;
+            --surface: #111827;
+            --surface-light: #1f2937;
+            --border: #374151;
+            --text: #f3f4f6;
+            --text-light: #d1d5db;
             --success: #10b981;
             --warning: #f59e0b;
             --error: #ef4444;
@@ -37,10 +37,11 @@
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: var(--lighter);
+            background: linear-gradient(180deg, var(--darker) 0%, var(--dark) 50%, #0f1929 100%);
             color: var(--text);
             line-height: 1.6;
             overflow-x: hidden;
+            min-height: 100vh;
         }
         
         /* Navigation */
@@ -48,9 +49,9 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(5, 8, 18, 0.8);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
             z-index: 1000;
             padding: 1rem 2rem;
         }
@@ -64,27 +65,29 @@
         }
         
         .logo {
-            font-weight: 800;
+            font-weight: 900;
             font-size: 1.3rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, #818cf8, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             text-decoration: none;
+            letter-spacing: -0.5px;
         }
         
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 2.5rem;
             list-style: none;
         }
         
         .nav-links a {
             text-decoration: none;
-            color: var(--text);
+            color: var(--text-light);
             font-weight: 500;
             transition: color 0.3s;
             position: relative;
+            font-size: 0.95rem;
         }
         
         .nav-links a::after {
@@ -107,26 +110,26 @@
         }
         
         .github-btn {
-            background: var(--dark);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            padding: 0.5rem 1.2rem;
+            padding: 0.6rem 1.4rem;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s;
-            border: 1px solid var(--dark);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            font-size: 0.95rem;
         }
         
         .github-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
         }
         
         /* Hero Section */
         .hero {
-            padding-top: 120px;
-            padding-bottom: 80px;
-            background: linear-gradient(135deg, #f1f5f9 0%, #e0e7ff 50%, #f3e8ff 100%);
+            padding-top: 140px;
+            padding-bottom: 100px;
             position: relative;
             overflow: hidden;
         }
@@ -134,35 +137,13 @@
         .hero::before {
             content: '';
             position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: -30%;
-            left: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: float-reverse 8s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        
-        @keyframes float-reverse {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(20px); }
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+            pointer-events: none;
         }
         
         .hero-container {
@@ -174,25 +155,30 @@
         }
         
         .hero h1 {
-            font-size: 4rem;
+            font-size: 4.5rem;
             font-weight: 900;
             line-height: 1.1;
             margin-bottom: 1.5rem;
-            color: var(--dark);
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
         }
         
         .hero .subtitle {
             font-size: 1.3rem;
             color: var(--text-light);
-            margin-bottom: 2rem;
-            max-width: 600px;
+            margin-bottom: 2.5rem;
+            max-width: 700px;
             font-weight: 500;
+            line-height: 1.8;
         }
         
         .hero-cta {
             display: flex;
             gap: 1rem;
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
             flex-wrap: wrap;
         }
         
@@ -211,18 +197,19 @@
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+            border: 1px solid rgba(99, 102, 241, 0.5);
         }
         
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 30px 50px rgba(99, 102, 241, 0.5);
         }
         
         .btn-secondary {
-            background: white;
+            background: var(--surface-light);
             color: var(--primary);
             border: 2px solid var(--primary);
         }
@@ -230,28 +217,29 @@
         .btn-secondary:hover {
             background: var(--primary);
             color: white;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
         }
         
         .hero-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
-            max-width: 800px;
+            max-width: 900px;
         }
         
         .stat {
-            background: white;
-            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            padding: 2rem;
             border-radius: 12px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 0, 0, 0.05);
         }
         
         .stat-number {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, #818cf8, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -266,16 +254,20 @@
         
         /* Section */
         .section {
-            padding: 100px 2rem;
+            padding: 120px 2rem;
             max-width: 1400px;
             margin: 0 auto;
+            position: relative;
         }
         
         .section-title {
-            font-size: 2.8rem;
+            font-size: 3.2rem;
             font-weight: 900;
             margin-bottom: 1rem;
-            color: var(--dark);
+            background: linear-gradient(135deg, #e0e7ff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             text-align: center;
         }
         
@@ -283,24 +275,25 @@
             font-size: 1.1rem;
             color: var(--text-light);
             text-align: center;
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto 4rem;
             font-weight: 500;
+            line-height: 1.8;
         }
         
         /* Features */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
             gap: 2rem;
             margin-bottom: 3rem;
         }
         
         .feature {
-            background: white;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
             padding: 2.5rem;
             border-radius: 16px;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
@@ -311,32 +304,34 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 4px;
-            height: 0;
-            background: linear-gradient(180deg, var(--primary), var(--secondary));
-            transition: height 0.3s;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: translateX(-100%);
+            transition: transform 0.3s;
         }
         
         .feature:hover {
             border-color: var(--primary);
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.1);
-            transform: translateY(-5px);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.15);
+            transform: translateY(-8px);
         }
         
         .feature:hover::before {
-            height: 100%;
+            transform: translateX(0);
         }
         
         .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 2.8rem;
+            margin-bottom: 1.2rem;
         }
         
         .feature h3 {
             font-size: 1.3rem;
             font-weight: 700;
             margin-bottom: 0.8rem;
-            color: var(--dark);
+            color: var(--text);
         }
         
         .feature p {
@@ -350,30 +345,31 @@
             grid-template-columns: 1fr 1fr;
             gap: 3rem;
             align-items: center;
-            margin: 4rem 0;
+            margin: 5rem 0;
         }
         
         .code-example {
-            background: var(--dark);
-            padding: 2rem;
+            background: var(--darker);
+            padding: 2.5rem;
             border-radius: 12px;
             overflow-x: auto;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
         }
         
         .code-example code {
             font-family: 'JetBrains Mono', 'Fira Code', monospace;
             color: #e0e0e0;
-            line-height: 1.6;
+            line-height: 1.7;
             font-size: 0.95rem;
         }
         
         .code-label {
             color: #888;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            font-weight: 600;
         }
         
         .code-content {
@@ -381,23 +377,28 @@
         }
         
         .code-content h3 {
-            font-size: 1.8rem;
+            font-size: 2rem;
             margin-bottom: 1rem;
-            color: var(--dark);
+            background: linear-gradient(135deg, #818cf8, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
         }
         
         .code-content p {
             color: var(--text-light);
             margin-bottom: 1rem;
-            line-height: 1.8;
+            line-height: 1.9;
+            font-size: 1.05rem;
         }
         
         /* Architecture */
         .architecture {
-            background: white;
-            padding: 2.5rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
+            padding: 3rem;
             border-radius: 16px;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             margin: 3rem 0;
         }
         
@@ -409,22 +410,33 @@
         }
         
         .arch-module {
-            background: linear-gradient(135deg, #f0f4ff 0%, #f9f5ff 100%);
-            padding: 1.5rem;
+            background: var(--surface);
+            padding: 1.8rem;
             border-radius: 12px;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+        }
+        
+        .arch-module:hover {
+            background: var(--surface-light);
+            border-color: var(--secondary);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
         }
         
         .arch-module h4 {
-            color: var(--primary);
-            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #818cf8, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.8rem;
             font-weight: 700;
         }
         
         .arch-module p {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-light);
+            line-height: 1.6;
         }
         
         /* Quality badges */
@@ -436,23 +448,25 @@
         }
         
         .badge {
-            background: white;
-            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            padding: 2rem;
             border-radius: 12px;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             text-align: center;
             transition: all 0.3s;
         }
         
         .badge:hover {
             border-color: var(--primary);
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
+            transform: translateY(-5px);
         }
         
         .badge-number {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, #818cf8, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -462,21 +476,22 @@
         .badge-label {
             color: var(--text-light);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
         
         /* Performance */
         .perf-section {
-            background: linear-gradient(135deg, var(--dark), #1e293b);
-            color: white;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+            border: 1px solid rgba(99, 102, 241, 0.3);
             border-radius: 16px;
-            padding: 3rem;
-            margin: 3rem 0;
+            padding: 4rem;
+            margin: 4rem 0;
         }
         
         .perf-section h3 {
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
+            font-size: 2rem;
+            margin-bottom: 2.5rem;
+            color: var(--text);
         }
         
         .perf-grid {
@@ -486,28 +501,38 @@
         }
         
         .perf-metric {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1.5rem;
+            background: var(--surface);
+            padding: 1.8rem;
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .perf-metric:hover {
+            border-color: var(--primary);
+            background: var(--surface-light);
         }
         
         .perf-metric-value {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 900;
-            color: #4ade80;
-            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #10b981, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.8rem;
         }
         
         .perf-metric-label {
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--text);
             font-size: 0.95rem;
+            font-weight: 600;
         }
         
         .perf-metric-desc {
-            color: rgba(255, 255, 255, 0.5);
+            color: var(--text-light);
             font-size: 0.85rem;
-            margin-top: 0.5rem;
+            margin-top: 0.8rem;
         }
         
         /* Comparison table */
@@ -519,27 +544,28 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
+            background: var(--surface);
             border-radius: 12px;
             overflow: hidden;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(99, 102, 241, 0.2);
         }
         
         th {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 1.2rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.3));
+            color: var(--text);
+            padding: 1.5rem;
             text-align: left;
             font-weight: 700;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
         }
         
         td {
-            padding: 1.2rem;
-            border-top: 1px solid var(--border);
+            padding: 1.2rem 1.5rem;
+            border-top: 1px solid rgba(99, 102, 241, 0.1);
         }
         
         tr:hover td {
-            background: var(--lighter);
+            background: var(--surface-light);
         }
         
         .check {
@@ -548,37 +574,44 @@
         }
         
         .cross {
-            color: #999;
+            color: #666;
             font-weight: 700;
         }
         
         /* CTA Section */
         .cta-section {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            border: 1px solid rgba(99, 102, 241, 0.3);
             color: white;
-            padding: 4rem 2rem;
+            padding: 5rem 2rem;
             border-radius: 16px;
             text-align: center;
-            margin: 4rem 0;
+            margin: 5rem 0;
         }
         
         .cta-section h2 {
-            font-size: 2.5rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
             font-weight: 900;
+            background: linear-gradient(135deg, #e0e7ff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .cta-section p {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             margin-bottom: 2rem;
             opacity: 0.95;
+            color: var(--text-light);
         }
         
         /* Footer */
         footer {
-            background: var(--dark);
+            background: linear-gradient(180deg, var(--darker) 0%, #020813 100%);
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
             color: white;
-            padding: 3rem 2rem;
+            padding: 4rem 2rem;
             margin-top: 6rem;
         }
         
@@ -590,21 +623,23 @@
         .footer-content {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
+            gap: 3rem;
+            margin-bottom: 3rem;
         }
         
         .footer-section h4 {
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             font-weight: 700;
+            color: var(--text);
         }
         
         .footer-section a {
             display: block;
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--text-light);
             text-decoration: none;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
             transition: color 0.3s;
+            font-size: 0.95rem;
         }
         
         .footer-section a:hover {
@@ -612,17 +647,18 @@
         }
         
         .footer-divider {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
             padding-top: 2rem;
             margin-top: 2rem;
             text-align: center;
-            color: rgba(255, 255, 255, 0.5);
+            color: var(--text-light);
+            font-size: 0.9rem;
         }
         
         /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 2.8rem;
             }
             
             .section-title {
@@ -666,7 +702,7 @@
     <section class="hero">
         <div class="hero-container">
             <h1>Modern cp/mv for Production</h1>
-            <p class="subtitle">A high-performance, thread-safe replacement for cp/mv with real-time progress, resumable transfers, and safety guarantees.</p>
+            <p class="subtitle">Production-grade file transfer tool with real-time progress, resumable transfers, safety guarantees, and comprehensive verification.</p>
             
             <div class="hero-cta">
                 <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/releases/tag/v0.2.0" class="btn btn-primary">
@@ -782,7 +818,7 @@
             </div>
         </div>
         
-        <div class="code-showcase" style="direction: rtl; margin-top: 4rem;">
+        <div class="code-showcase" style="direction: rtl; margin-top: 5rem;">
             <div class="code-content" style="direction: ltr;">
                 <h3>Resumable Transfers</h3>
                 <p>Network interruption? Power loss? No problem. Your transfer resumes from exactly where it stopped.</p>
@@ -802,7 +838,7 @@ Resume from [y/n]: y
             </div>
         </div>
         
-        <div class="code-showcase" style="margin-top: 4rem;">
+        <div class="code-showcase" style="margin-top: 5rem;">
             <div class="code-content">
                 <h3>JSON Output for Automation</h3>
                 <p>Integrate with your infrastructure automation tools, monitoring systems, and CI/CD pipelines.</p>
@@ -820,8 +856,7 @@ Resume from [y/n]: y
     "files_copied": 1,
     "duration_secs": 5.8,
     "speed_mbps": 285.0,
-    "verified": true,
-    "resumed": false
+    "verified": true
   }
 }</code></pre>
             </div>
@@ -834,17 +869,17 @@ Resume from [y/n]: y
         <p class="section-subtitle">Built with Rust for safety, performance, and reliability.</p>
         
         <div class="architecture">
-            <h3 style="color: var(--primary); margin-bottom: 1rem;">Core Design Principles</h3>
-            <ul style="margin-left: 20px; color: var(--text-light); line-height: 2;">
-                <li><strong>Memory Safe:</strong> 100% safe Rust – no unsafe code blocks</li>
-                <li><strong>Concurrent:</strong> Async/await with tokio for non-blocking operations</li>
-                <li><strong>Atomic:</strong> Temp-then-rename pattern prevents partial overwrites</li>
-                <li><strong>Efficient:</strong> 64MB chunked I/O optimized for all storage types</li>
-                <li><strong>Observable:</strong> Real-time metrics and detailed error messages</li>
-                <li><strong>Testable:</strong> Comprehensive test suite with 50%+ coverage</li>
+            <h3 style="color: var(--text); margin-bottom: 1.5rem; font-size: 1.5rem;">Core Design Principles</h3>
+            <ul style="margin-left: 20px; color: var(--text-light); line-height: 2.2; font-size: 1.05rem;">
+                <li><strong style="color: var(--text);">Memory Safe:</strong> 100% safe Rust – no unsafe code blocks</li>
+                <li><strong style="color: var(--text);">Concurrent:</strong> Async/await with tokio for non-blocking operations</li>
+                <li><strong style="color: var(--text);">Atomic:</strong> Temp-then-rename pattern prevents partial overwrites</li>
+                <li><strong style="color: var(--text);">Efficient:</strong> 64MB chunked I/O optimized for all storage types</li>
+                <li><strong style="color: var(--text);">Observable:</strong> Real-time metrics and detailed error messages</li>
+                <li><strong style="color: var(--text);">Testable:</strong> Comprehensive test suite with 50%+ coverage</li>
             </ul>
             
-            <h3 style="color: var(--primary); margin-top: 2rem; margin-bottom: 1rem;">Module Architecture</h3>
+            <h3 style="color: var(--text); margin-top: 3rem; margin-bottom: 1.5rem; font-size: 1.5rem;">Module Architecture</h3>
             <div class="arch-grid">
                 <div class="arch-module">
                     <h4>Transfer Engine</h4>
@@ -1087,7 +1122,7 @@ Resume from [y/n]: y
             
             <div class="footer-divider">
                 <p>BetterDefaultCPMV v0.2.0 • Apache License 2.0 • Production-Grade File Transfer Tool</p>
-                <p style="margin-top: 1rem; font-size: 0.85rem;">Built with Rust • Async/Await • Zero Unsafe Code</p>
+                <p style="margin-top: 1rem;">Built with Rust • Async/Await • Zero Unsafe Code</p>
             </div>
         </div>
     </footer>
