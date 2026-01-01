@@ -4,7 +4,7 @@ version = "0.2.0"
 edition = "2021"
 authors = ["BetterDefaultCPMV Team"]
 description = "Modern replacement for cp/mv with progress, safety, and resume"
-repository = "https://github.com/betterdefaultcpmv/better-cp"
+repository = "https://github.com/nom-nom-hub/BetterDefaultCPMV"
 readme = "README.md"
 license = "Apache-2.0"
 
