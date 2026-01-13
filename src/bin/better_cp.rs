@@ -2,6 +2,7 @@ use clap::Parser;
 use console::style;
 use better_cp::cli::{Cli, Commands, CopyArgs};
 use better_cp::copy::{FileCopier, copy_directory};
+use better_cp::parallel::{ParallelFileCopier, parallel_copy_directory};
 use better_cp::error::Result;
 use std::time::Instant;
 
@@ -43,24 +44,42 @@ async fn handle_copy(args: CopyArgs) -> Result<()> {
         let source = &args.source[0];
         
         if source.is_dir() {
-            // Directory copy
-            copy_directory(
-                source,
-                &args.destination,
-                args.overwrite,
-                !args.no_verify,
-            ).await?;
+            // Directory copy - use parallel if enabled
+            if args.parallel > 0 {
+                parallel_copy_directory(
+                    source,
+                    &args.destination,
+                    args.parallel,
+                ).await?;
+            } else {
+                copy_directory(
+                    source,
+                    &args.destination,
+                    args.overwrite,
+                    !args.no_verify,
+                ).await?;
+            }
         } else {
-            // File copy
-            let copier = FileCopier::new(
-                source.clone(),
-                args.destination.clone(),
-                args.overwrite,
-                !args.no_verify,
-                !args.no_resume && args.resume,
-                args.atomic,
-            );
-            copier.copy().await?;
+            // File copy - use parallel if enabled and file is large enough
+            if args.parallel > 0 {
+                let parallel_copier = ParallelFileCopier::new(
+                    source.clone(),
+                    args.destination.clone(),
+                    args.parallel,
+                    !args.no_verify,
+                );
+                parallel_copier.copy().await?;
+            } else {
+                let copier = FileCopier::new(
+                    source.clone(),
+                    args.destination.clone(),
+                    args.overwrite,
+                    !args.no_verify,
+                    !args.no_resume && args.resume,
+                    args.atomic,
+                );
+                copier.copy().await?;
+            }
         }
     } else {
         // Multiple sources copy (to directory)
@@ -69,31 +88,65 @@ async fn handle_copy(args: CopyArgs) -> Result<()> {
             return Ok(());
         }
 
-        for source in &args.source {
-            let target = args.destination.join(
-                source.file_name()
-                    .ok_or_else(|| better_cp::error::Error::Custom("Invalid source path".to_string()))?
-            );
-            
-            if source.is_dir() {
-                // Recursive directory copy
-                copy_directory(
-                    source,
-                    &target,
-                    args.overwrite.clone(),
-                    !args.no_verify,
-                ).await?;
-            } else {
-                // File copy
-                let copier = FileCopier::new(
-                    source.clone(),
-                    target,
-                    args.overwrite.clone(),
-                    !args.no_verify,
-                    !args.no_resume && args.resume,
-                    args.atomic,
+        if args.parallel > 0 {
+            // Parallel copy of multiple files
+            let mut handles = Vec::new();
+
+            for source in &args.source {
+                let target = args.destination.join(
+                    source.file_name()
+                        .ok_or_else(|| better_cp::error::Error::Custom("Invalid source path".to_string()))?
                 );
-                copier.copy().await?;
+
+                let src = source.clone();
+                let parallel_threads = args.parallel;
+                let verify = !args.no_verify;
+
+                let handle = tokio::spawn(async move {
+                    if src.is_dir() {
+                        parallel_copy_directory(&src, &target, parallel_threads).await
+                    } else {
+                        let copier = ParallelFileCopier::new(src, target, parallel_threads, verify);
+                        copier.copy().await
+                    }
+                });
+
+                handles.push(handle);
+            }
+
+            // Wait for all to complete
+            for handle in handles {
+                handle.await.map_err(|e| better_cp::error::Error::Custom(e.to_string()))?
+                    .map_err(|e| better_cp::error::Error::Custom(format!("Copy error: {}", e)))?;
+            }
+        } else {
+            // Sequential copy
+            for source in &args.source {
+                let target = args.destination.join(
+                    source.file_name()
+                        .ok_or_else(|| better_cp::error::Error::Custom("Invalid source path".to_string()))?
+                );
+                
+                if source.is_dir() {
+                    // Recursive directory copy
+                    copy_directory(
+                        source,
+                        &target,
+                        args.overwrite.clone(),
+                        !args.no_verify,
+                    ).await?;
+                } else {
+                    // File copy
+                    let copier = FileCopier::new(
+                        source.clone(),
+                        target,
+                        args.overwrite.clone(),
+                        !args.no_verify,
+                        !args.no_resume && args.resume,
+                        args.atomic,
+                    );
+                    copier.copy().await?;
+                }
             }
         }
     }

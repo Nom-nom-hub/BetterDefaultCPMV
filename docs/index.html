@@ -3,682 +3,552 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BetterDefaultCPMV – Production-Grade cp/mv Replacement</title>
-    <link href="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/styles/atom-one-dark.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/highlight.min.js"></script>
+    <title>BetterCP Thunder – Lightning-Fast File Transfer</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary: #8b5cf6;
-            --accent: #ec4899;
-            --dark: #0a0e27;
-            --darker: #050812;
-            --surface: #111827;
-            --surface-light: #1f2937;
-            --border: #374151;
-            --text: #f3f4f6;
-            --text-light: #d1d5db;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --error: #ef4444;
+            --bg-primary: #0f0f15;
+            --bg-secondary: #1a1a24;
+            --bg-tertiary: #252532;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3c2;
+            --accent-cyan: #00d9ff;
+            --accent-orange: #ff6b35;
+            --accent-yellow: #ffd60a;
+            --border-color: #2d2d3d;
         }
-        
+
         html {
             scroll-behavior: smooth;
         }
-        
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(180deg, var(--darker) 0%, var(--dark) 50%, #0f1929 100%);
-            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
-            min-height: 100vh;
+            position: relative;
         }
-        
+
+        #lightning-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body > * {
+            position: relative;
+            z-index: 1;
+        }
+
         /* Navigation */
         nav {
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(5, 8, 18, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            background: rgba(15, 15, 21, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
             z-index: 1000;
-            padding: 1rem 2rem;
+            padding: 1rem 0;
         }
-        
-        .nav-container {
-            max-width: 1400px;
+
+        .nav-wrapper {
+            max-width: 1320px;
             margin: 0 auto;
+            padding: 0 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .logo {
-            font-weight: 900;
-            font-size: 1.3rem;
-            background: linear-gradient(135deg, #818cf8, #a78bfa);
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-orange));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-decoration: none;
-            letter-spacing: -0.5px;
         }
-        
+
         .nav-links {
             display: flex;
-            gap: 2.5rem;
+            gap: 3rem;
             list-style: none;
         }
-        
+
         .nav-links a {
+            color: var(--text-secondary);
             text-decoration: none;
-            color: var(--text-light);
-            font-weight: 500;
-            transition: color 0.3s;
-            position: relative;
             font-size: 0.95rem;
+            transition: color 0.3s ease;
         }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transition: width 0.3s;
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-        
+
         .nav-links a:hover {
-            color: var(--primary);
+            color: var(--accent-cyan);
         }
-        
-        .github-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 0.6rem 1.4rem;
-            border-radius: 8px;
+
+        .nav-cta {
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-orange) 100%);
+            color: var(--bg-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s;
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
         }
-        
-        .github-btn:hover {
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+
+        .nav-cta:hover {
             transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 217, 255, 0.2);
         }
-        
-        /* Hero Section */
+
+        /* Hero */
         .hero {
-            padding-top: 140px;
-            padding-bottom: 100px;
+            padding: 120px 2rem 100px;
+            text-align: center;
             position: relative;
-            overflow: hidden;
         }
-        
+
         .hero::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 217, 255, 0.08) 0%, transparent 70%);
+            filter: blur(60px);
             pointer-events: none;
         }
-        
-        .hero-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
+
+        .hero-content {
             position: relative;
             z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
         }
-        
+
         .hero h1 {
-            font-size: 4.5rem;
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #a78bfa 100%);
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            letter-spacing: -1px;
+        }
+
+        .version-badge {
+            display: inline-block;
+            font-size: 1rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-orange));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: -1px;
+            margin-bottom: 1.5rem;
         }
-        
-        .hero .subtitle {
-            font-size: 1.3rem;
-            color: var(--text-light);
-            margin-bottom: 2.5rem;
-            max-width: 700px;
-            font-weight: 500;
-            line-height: 1.8;
+
+        .hero-accent {
+            background: linear-gradient(90deg, var(--accent-cyan) 0%, var(--accent-orange) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        
-        .hero-cta {
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
             display: flex;
             gap: 1rem;
+            justify-content: center;
             margin-bottom: 4rem;
             flex-wrap: wrap;
         }
-        
+
         .btn {
             padding: 1rem 2rem;
-            border: none;
-            border-radius: 10px;
+            border-radius: 6px;
             font-weight: 600;
-            cursor: pointer;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             font-size: 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
         }
-        
+
         .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
-            border: 1px solid rgba(99, 102, 241, 0.5);
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-orange) 100%);
+            color: var(--bg-primary);
         }
-        
+
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 30px 50px rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 16px 32px rgba(0, 217, 255, 0.25);
         }
-        
+
         .btn-secondary {
-            background: var(--surface-light);
-            color: var(--primary);
-            border: 2px solid var(--primary);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
         }
-        
+
         .btn-secondary:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+            background: var(--bg-tertiary);
+            border-color: var(--accent-cyan);
         }
-        
+
         .hero-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            max-width: 900px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
         }
-        
+
         .stat {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            backdrop-filter: blur(10px);
+            text-align: center;
         }
-        
+
         .stat-number {
             font-size: 2.5rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #818cf8, #a78bfa);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-yellow));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
         .stat-label {
-            color: var(--text-light);
             font-size: 0.9rem;
-            margin-top: 0.5rem;
-            font-weight: 500;
+            color: var(--text-secondary);
         }
-        
-        /* Section */
-        .section {
-            padding: 120px 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            position: relative;
-        }
-        
-        .section-title {
-            font-size: 3.2rem;
-            font-weight: 900;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #e0e7ff, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-align: center;
-        }
-        
-        .section-subtitle {
-            font-size: 1.1rem;
-            color: var(--text-light);
-            text-align: center;
-            max-width: 700px;
-            margin: 0 auto 4rem;
-            font-weight: 500;
-            line-height: 1.8;
-        }
-        
+
         /* Features */
+        .features {
+            padding: 120px 2rem;
+            background: linear-gradient(180deg, rgba(0, 217, 255, 0.02) 0%, transparent 100%);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
-            margin-bottom: 3rem;
+            max-width: 1320px;
+            margin: 0 auto;
         }
-        
-        .feature {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
-            padding: 2.5rem;
-            border-radius: 16px;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .feature::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transform: translateX(-100%);
-            transition: transform 0.3s;
-        }
-        
-        .feature:hover {
-            border-color: var(--primary);
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
-            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.15);
-            transform: translateY(-8px);
-        }
-        
-        .feature:hover::before {
-            transform: translateX(0);
-        }
-        
-        .feature-icon {
-            font-size: 2.8rem;
-            margin-bottom: 1.2rem;
-        }
-        
-        .feature h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 0.8rem;
-            color: var(--text);
-        }
-        
-        .feature p {
-            color: var(--text-light);
-            line-height: 1.7;
-        }
-        
-        /* Code showcase */
-        .code-showcase {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-            margin: 5rem 0;
-        }
-        
-        .code-example {
-            background: var(--darker);
-            padding: 2.5rem;
-            border-radius: 12px;
-            overflow-x: auto;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-        }
-        
-        .code-example code {
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            color: #e0e0e0;
-            line-height: 1.7;
-            font-size: 0.95rem;
-        }
-        
-        .code-label {
-            color: #888;
-            margin-bottom: 1.5rem;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 600;
-        }
-        
-        .code-content {
-            flex: 1;
-        }
-        
-        .code-content h3 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #818cf8, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 900;
-        }
-        
-        .code-content p {
-            color: var(--text-light);
-            margin-bottom: 1rem;
-            line-height: 1.9;
-            font-size: 1.05rem;
-        }
-        
-        /* Architecture */
-        .architecture {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
-            padding: 3rem;
-            border-radius: 16px;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            margin: 3rem 0;
-        }
-        
-        .arch-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        
-        .arch-module {
-            background: var(--surface);
-            padding: 1.8rem;
-            border-radius: 12px;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-left: 4px solid var(--primary);
-            transition: all 0.3s;
-        }
-        
-        .arch-module:hover {
-            background: var(--surface-light);
-            border-color: var(--secondary);
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
-        }
-        
-        .arch-module h4 {
-            background: linear-gradient(135deg, #818cf8, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.8rem;
-            font-weight: 700;
-        }
-        
-        .arch-module p {
-            font-size: 0.95rem;
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-        
-        /* Quality badges */
-        .quality-badges {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin: 3rem 0;
-        }
-        
-        .badge {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+
+        .feature-card {
             padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            text-align: center;
-            transition: all 0.3s;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
-        
-        .badge:hover {
-            border-color: var(--primary);
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
-            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
-            transform: translateY(-5px);
+
+        .feature-card:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 217, 255, 0.02);
+            transform: translateY(-4px);
         }
-        
-        .badge-number {
-            font-size: 2.8rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #818cf8, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
         }
-        
-        .badge-label {
-            color: var(--text-light);
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.8rem;
             font-weight: 600;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
             font-size: 0.95rem;
         }
-        
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-yellow));
+            color: var(--bg-primary);
+            padding: 0.25rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 0.5rem;
+        }
+
         /* Performance */
-        .perf-section {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 16px;
-            padding: 4rem;
-            margin: 4rem 0;
+        .performance {
+            padding: 120px 2rem;
         }
-        
-        .perf-section h3 {
-            font-size: 2rem;
-            margin-bottom: 2.5rem;
-            color: var(--text);
-        }
-        
+
         .perf-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
+            max-width: 1320px;
+            margin: 3rem auto;
         }
-        
-        .perf-metric {
-            background: var(--surface);
-            padding: 1.8rem;
-            border-radius: 12px;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            transition: all 0.3s;
+
+        .perf-card {
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-align: center;
         }
-        
-        .perf-metric:hover {
-            border-color: var(--primary);
-            background: var(--surface-light);
-        }
-        
-        .perf-metric-value {
+
+        .perf-value {
             font-size: 2.2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #10b981, #34d399);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-orange));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 0.8rem;
         }
-        
-        .perf-metric-label {
-            color: var(--text);
-            font-size: 0.95rem;
+
+        .perf-label {
             font-weight: 600;
+            margin-bottom: 0.3rem;
         }
-        
-        .perf-metric-desc {
-            color: var(--text-light);
+
+        .perf-desc {
             font-size: 0.85rem;
-            margin-top: 0.8rem;
+            color: var(--text-secondary);
         }
-        
-        /* Comparison table */
+
+        /* Quality Badges */
+        .quality-badges {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.5rem;
+            max-width: 1320px;
+            margin: 4rem auto;
+        }
+
+        .quality-badge {
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .quality-badge:hover {
+            border-color: var(--accent-cyan);
+        }
+
+        .quality-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .quality-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Comparison */
+        .comparison {
+            padding: 120px 2rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 217, 255, 0.02) 100%);
+        }
+
         .comparison-table {
+            max-width: 900px;
+            margin: 3rem auto;
             overflow-x: auto;
-            margin: 3rem 0;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
-            background: var(--surface);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid rgba(99, 102, 241, 0.2);
         }
-        
+
         th {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.3));
-            color: var(--text);
-            padding: 1.5rem;
             text-align: left;
-            font-weight: 700;
-            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            background: rgba(0, 217, 255, 0.02);
         }
-        
+
         td {
-            padding: 1.2rem 1.5rem;
-            border-top: 1px solid rgba(99, 102, 241, 0.1);
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
         }
-        
-        tr:hover td {
-            background: var(--surface-light);
+
+        tr:last-child td {
+            border-bottom: none;
         }
-        
+
+        tr:hover {
+            background: rgba(0, 217, 255, 0.02);
+        }
+
         .check {
-            color: var(--success);
+            color: #10b981;
             font-weight: 700;
         }
-        
+
         .cross {
-            color: #666;
+            color: #ef4444;
             font-weight: 700;
         }
-        
-        /* CTA Section */
-        .cta-section {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            color: white;
-            padding: 5rem 2rem;
-            border-radius: 16px;
+
+        /* CTA */
+        .cta {
+            padding: 120px 2rem;
             text-align: center;
-            margin: 5rem 0;
         }
-        
-        .cta-section h2 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #e0e7ff, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .cta-section p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.95;
-            color: var(--text-light);
-        }
-        
-        /* Footer */
-        footer {
-            background: linear-gradient(180deg, var(--darker) 0%, #020813 100%);
-            border-top: 1px solid rgba(99, 102, 241, 0.2);
-            color: white;
-            padding: 4rem 2rem;
-            margin-top: 6rem;
-        }
-        
-        .footer-container {
-            max-width: 1400px;
+
+        .cta-inner {
+            max-width: 600px;
             margin: 0 auto;
         }
-        
+
+        .cta h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 4rem 2rem;
+        }
+
         .footer-content {
+            max-width: 1320px;
+            margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 3rem;
             margin-bottom: 3rem;
         }
-        
+
         .footer-section h4 {
-            margin-bottom: 1.2rem;
-            font-weight: 700;
-            color: var(--text);
+            font-weight: 600;
+            margin-bottom: 1rem;
         }
-        
+
         .footer-section a {
             display: block;
-            color: var(--text-light);
+            color: var(--text-secondary);
             text-decoration: none;
+            font-size: 0.9rem;
             margin-bottom: 0.8rem;
-            transition: color 0.3s;
-            font-size: 0.95rem;
+            transition: color 0.3s ease;
         }
-        
+
         .footer-section a:hover {
-            color: var(--primary);
+            color: var(--accent-cyan);
         }
-        
+
         .footer-divider {
-            border-top: 1px solid rgba(99, 102, 241, 0.2);
-            padding-top: 2rem;
-            margin-top: 2rem;
             text-align: center;
-            color: var(--text-light);
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
             font-size: 0.9rem;
         }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero h1 {
-                font-size: 2.8rem;
+                font-size: 2.5rem;
             }
-            
-            .section-title {
-                font-size: 2rem;
+
+            .section-header h2 {
+                font-size: 1.8rem;
             }
-            
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+
             .nav-links {
-                display: none;
+                gap: 1.5rem;
+                font-size: 0.85rem;
             }
-            
-            .code-showcase {
+
+            .footer-content {
                 grid-template-columns: 1fr;
-            }
-            
-            .arch-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .hero-cta {
-                flex-direction: column;
+                gap: 2rem;
             }
         }
     </style>
@@ -686,363 +556,235 @@
 <body>
     <!-- Navigation -->
     <nav>
-        <div class="nav-container">
-            <a href="#" class="logo">BetterDefaultCPMV</a>
+        <div class="nav-wrapper">
+            <a href="#" class="logo"><span class="logo-icon">⚡</span>BetterCP</a>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
-                <li><a href="#architecture">Architecture</a></li>
                 <li><a href="#performance">Performance</a></li>
-                <li><a href="#docs">Documentation</a></li>
-                <li><a href="https://github.com/nom-nom-hub/BetterDefaultCPMV" class="github-btn">GitHub</a></li>
+                <li><a href="#comparison">Compare</a></li>
+                <li><a href="https://github.com/nom-nom-hub/BetterDefaultCPMV" class="nav-cta">GitHub</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="hero">
-        <div class="hero-container">
-            <h1>Modern cp/mv for Production</h1>
-            <p class="subtitle">Production-grade file transfer tool with real-time progress, resumable transfers, safety guarantees, and comprehensive verification.</p>
+        <div class="hero-content">
+            <div class="version-badge">⚡ Thunder Edition (v0.3.0)</div>
+            <h1>File transfer <span class="hero-accent">at lightning speed</span></h1>
+            <p>The modern replacement for cp and mv. Move, copy, and verify files with real-time progress, parallel I/O, instant copy-on-write, and production-grade safety guarantees.</p>
             
-            <div class="hero-cta">
-                <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/releases/tag/v0.2.0" class="btn btn-primary">
-                    ↓ Download v0.2.0
-                </a>
-                <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV" class="btn btn-secondary">
-                    View Source Code
-                </a>
+            <div class="hero-buttons">
+                <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/releases/tag/v0.3.0" class="btn btn-primary">Download Thunder</a>
+                <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV" class="btn btn-secondary">View Source</a>
             </div>
-            
+
             <div class="hero-stats">
                 <div class="stat">
-                    <div class="stat-number">26/26</div>
-                    <div class="stat-label">Tests Passing (100%)</div>
+                    <div class="stat-number">20/20</div>
+                    <div class="stat-label">Tests Passing</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">50%+</div>
+                    <div class="stat-number">60%+</div>
                     <div class="stat-label">Code Coverage</div>
                 </div>
                 <div class="stat">
                     <div class="stat-number">0</div>
-                    <div class="stat-label">Build Warnings</div>
+                    <div class="stat-label">Warnings</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">A+</div>
-                    <div class="stat-label">Code Quality</div>
+                    <div class="stat-number">⚡</div>
+                    <div class="stat-label">Thunder</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="section" id="features">
-        <h2 class="section-title">Core Features</h2>
-        <p class="section-subtitle">Everything you need for safe, observable, and reliable file transfers.</p>
-        
+    <!-- Features -->
+    <section class="features" id="features">
+        <div class="section-header">
+            <h2>Complete feature set</h2>
+            <p>Everything you need for fast, safe file operations in production.</p>
+        </div>
+
         <div class="features-grid">
-            <div class="feature">
-                <div class="feature-icon">📊</div>
-                <h3>Real-Time Progress</h3>
-                <p>Live speed metrics, percentage complete, and ETA. See exactly what's happening during transfers instead of blindly waiting.</p>
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <h3>Real-time Progress</h3>
+                <p>Watch transfers happen with live speed metrics, percentage complete, and accurate ETA. No more guessing.</p>
             </div>
-            
-            <div class="feature">
-                <div class="feature-icon">⏸️</div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🚀</span>
+                <h3>Move Operations <span class="badge">New</span></h3>
+                <p>Instant same-filesystem rename. Cross-filesystem moves with full progress tracking and all safety features.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">⚙️</span>
+                <h3>Parallel I/O <span class="badge">New</span></h3>
+                <p>Multi-threaded transfers. 30-40% faster for many small files with <code>--parallel 4</code>.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">✨</span>
+                <h3>Instant Copy <span class="badge">New</span></h3>
+                <p>Reflink/CoW on Btrfs, XFS, Ext4 and APFS. Instant copies with automatic fallback.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🛡️</span>
+                <h3>Built for Safety</h3>
+                <p>Interactive overwrite prompts with file context. SHA-256 verification. Atomic operations with temp files.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">⏸️</span>
                 <h3>Resume Capability</h3>
-                <p>Interrupted 10GB transfers resume from checkpoint. Saves hours of wasted time on failed large-file operations.</p>
+                <p>Resume interrupted transfers from checkpoint. Perfect for unstable connections and large files.</p>
             </div>
-            
-            <div class="feature">
-                <div class="feature-icon">🛡️</div>
-                <h3>Safety Prompts</h3>
-                <p>Interactive confirmation before overwriting files with full context. Prevents accidental data loss.</p>
-            </div>
-            
-            <div class="feature">
-                <div class="feature-icon">✅</div>
-                <h3>Checksum Verification</h3>
-                <p>SHA-256 validation after transfer detects corruption and ensures data integrity across all file operations.</p>
-            </div>
-            
-            <div class="feature">
-                <div class="feature-icon">📁</div>
-                <h3>Recursive Directories</h3>
-                <p>Copy nested directory structures with arbitrary nesting depth. Preserves permissions and metadata.</p>
-            </div>
-            
-            <div class="feature">
-                <div class="feature-icon">👁️</div>
-                <h3>Dry-Run Preview</h3>
-                <p>Preview exact operations before execution. See file counts, total sizes, and actions without making changes.</p>
-            </div>
-            
-            <div class="feature">
-                <div class="feature-icon">📊</div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
                 <h3>JSON Output</h3>
-                <p>Machine-readable structured output for scripting, automation, and CI/CD pipeline integration.</p>
+                <p>Machine-readable output for scripting and CI/CD integration. Quiet, normal, or verbose modes.</p>
             </div>
-            
-            <div class="feature">
-                <div class="feature-icon">🎯</div>
-                <h3>Smart Error Messages</h3>
-                <p>Each error type includes contextual recovery guidance. Know exactly how to resolve issues.</p>
+
+            <div class="feature-card">
+                <span class="feature-icon">📁</span>
+                <h3>Recursive Directories</h3>
+                <p>Copy nested structures with arbitrary depth. Full permission and metadata preservation.</p>
             </div>
-            
-            <div class="feature">
-                <div class="feature-icon">🔇</div>
-                <h3>Output Control</h3>
-                <p>Quiet, normal, or verbose modes. Choose output verbosity that matches your use case.</p>
+
+            <div class="feature-card">
+                <span class="feature-icon">👁️</span>
+                <h3>Dry-Run Preview</h3>
+                <p>See exactly what will happen before execution. File counts, sizes, and actions without changes.</p>
             </div>
         </div>
     </section>
 
-    <!-- Code Showcase -->
-    <section class="section">
-        <h2 class="section-title">In Action</h2>
-        
-        <div class="code-showcase">
-            <div class="code-content">
-                <h3>Real-Time Progress</h3>
-                <p>Watch your transfer in real-time with speed metrics and accurate ETA calculations. No more guessing how long operations will take.</p>
-                <p>BetterDefaultCPMV automatically handles large files with 64MB chunked I/O for optimal performance across all systems.</p>
-            </div>
-            <div class="code-example">
-                <div class="code-label">$ better-cp copy large.iso /backup/</div>
-<pre><code>Copying: large.iso → /backup/
-━━━━━━━━━━━━━━━━━━━━━━━━━━ 73%
-3.2 GB / 4.4 GB
-285 MB/s | ⏱ 4m 15s remaining
-
-✓ Verified (SHA-256)
-✓ Copied in 15.3s</code></pre>
-            </div>
+    <!-- Performance -->
+    <section class="performance" id="performance">
+        <div class="section-header">
+            <h2>Performance Built In</h2>
+            <p>Engineered for speed and tested for production workloads.</p>
         </div>
-        
-        <div class="code-showcase" style="direction: rtl; margin-top: 5rem;">
-            <div class="code-content" style="direction: ltr;">
-                <h3>Resumable Transfers</h3>
-                <p>Network interruption? Power loss? No problem. Your transfer resumes from exactly where it stopped.</p>
-                <p>Checkpoint-based resume with automatic state validation ensures reliable recovery on the first try.</p>
-            </div>
-            <div class="code-example">
-                <div class="code-label">$ better-cp copy --resume large.iso /backup/</div>
-<pre><code>📋 Incomplete transfer found
-Position: 73% complete (3.2 GB of 4.4 GB)
-Last updated: 2025-01-01 12:34:56
 
-Resume from [y/n]: y
+        <div class="perf-grid">
+            <div class="perf-card">
+                <div class="perf-value">285 MB/s</div>
+                <div class="perf-label">Throughput</div>
+                <div class="perf-desc">Sequential copy on modern SSD</div>
+            </div>
 
-✓ Resuming from checkpoint
-━━━━━━━━━━━━━━━━━━━━━━━ 98%
-✓ Completed in 4.2s</code></pre>
+            <div class="perf-card">
+                <div class="perf-value">&lt;1ms</div>
+                <div class="perf-label">Reflink Copy</div>
+                <div class="perf-desc">On supported filesystems</div>
             </div>
-        </div>
-        
-        <div class="code-showcase" style="margin-top: 5rem;">
-            <div class="code-content">
-                <h3>JSON Output for Automation</h3>
-                <p>Integrate with your infrastructure automation tools, monitoring systems, and CI/CD pipelines.</p>
-                <p>Structured output enables programmatic verification of operation success and performance metrics.</p>
-            </div>
-            <div class="code-example">
-                <div class="code-label">$ better-cp copy --json file.iso /backup/ | jq</div>
-<pre><code>{
-  "success": true,
-  "operation": "copy",
-  "source": ["/data/file.iso"],
-  "destination": "/backup/",
-  "summary": {
-    "bytes_transferred": 1650000000,
-    "files_copied": 1,
-    "duration_secs": 5.8,
-    "speed_mbps": 285.0,
-    "verified": true
-  }
-}</code></pre>
-            </div>
-        </div>
-    </section>
 
-    <!-- Architecture Section -->
-    <section class="section" id="architecture">
-        <h2 class="section-title">Production Architecture</h2>
-        <p class="section-subtitle">Built with Rust for safety, performance, and reliability.</p>
-        
-        <div class="architecture">
-            <h3 style="color: var(--text); margin-bottom: 1.5rem; font-size: 1.5rem;">Core Design Principles</h3>
-            <ul style="margin-left: 20px; color: var(--text-light); line-height: 2.2; font-size: 1.05rem;">
-                <li><strong style="color: var(--text);">Memory Safe:</strong> 100% safe Rust – no unsafe code blocks</li>
-                <li><strong style="color: var(--text);">Concurrent:</strong> Async/await with tokio for non-blocking operations</li>
-                <li><strong style="color: var(--text);">Atomic:</strong> Temp-then-rename pattern prevents partial overwrites</li>
-                <li><strong style="color: var(--text);">Efficient:</strong> 64MB chunked I/O optimized for all storage types</li>
-                <li><strong style="color: var(--text);">Observable:</strong> Real-time metrics and detailed error messages</li>
-                <li><strong style="color: var(--text);">Testable:</strong> Comprehensive test suite with 50%+ coverage</li>
-            </ul>
-            
-            <h3 style="color: var(--text); margin-top: 3rem; margin-bottom: 1.5rem; font-size: 1.5rem;">Module Architecture</h3>
-            <div class="arch-grid">
-                <div class="arch-module">
-                    <h4>Transfer Engine</h4>
-                    <p><strong>copy.rs</strong> – Async file/directory copy with chunked I/O and proper error handling</p>
-                </div>
-                <div class="arch-module">
-                    <h4>Safety Layer</h4>
-                    <p><strong>prompt.rs</strong> – User interaction and confirmation handling</p>
-                </div>
-                <div class="arch-module">
-                    <h4>Verification</h4>
-                    <p><strong>verify.rs</strong> – SHA-256 checksum computation and validation</p>
-                </div>
-                <div class="arch-module">
-                    <h4>Resume State</h4>
-                    <p><strong>resume.rs</strong> – Checkpoint persistence and recovery logic</p>
-                </div>
-                <div class="arch-module">
-                    <h4>Progress Tracking</h4>
-                    <p><strong>progress.rs</strong> – Real-time metrics and ETA calculation</p>
-                </div>
-                <div class="arch-module">
-                    <h4>Output Control</h4>
-                    <p><strong>output.rs</strong> + <strong>json_output.rs</strong> – Verbosity management and JSON serialization</p>
-                </div>
-                <div class="arch-module">
-                    <h4>Error Handling</h4>
-                    <p><strong>error.rs</strong> – Custom error types with recovery suggestions</p>
-                </div>
-                <div class="arch-module">
-                    <h4>Configuration</h4>
-                    <p><strong>config.rs</strong> – TOML config file parsing and XDG support</p>
-                </div>
-                <div class="arch-module">
-                    <h4>CLI Layer</h4>
-                    <p><strong>cli.rs</strong> – Clap-based argument parsing with 20+ flags</p>
-                </div>
+            <div class="perf-card">
+                <div class="perf-value">+35%</div>
+                <div class="perf-label">Parallel Speed</div>
+                <div class="perf-desc">100 small files with --parallel 4</div>
             </div>
-        </div>
-    </section>
 
-    <!-- Performance Section -->
-    <section class="section" id="performance">
-        <h2 class="section-title">Performance Metrics</h2>
-        <p class="section-subtitle">Benchmarked for production workloads.</p>
-        
-        <div class="perf-section">
-            <h3>Throughput Performance</h3>
-            <div class="perf-grid">
-                <div class="perf-metric">
-                    <div class="perf-metric-value">285 MB/s</div>
-                    <div class="perf-metric-label">Single 10GB File</div>
-                    <div class="perf-metric-desc">Local SSD to SSD on modern hardware</div>
-                </div>
-                <div class="perf-metric">
-                    <div class="perf-metric-value">&lt;1%</div>
-                    <div class="perf-metric-label">Resume Overhead</div>
-                    <div class="perf-metric-desc">Checkpoint management per chunk</div>
-                </div>
-                <div class="perf-metric">
-                    <div class="perf-metric-value">65 MB</div>
-                    <div class="perf-metric-label">Memory Footprint</div>
-                    <div class="perf-metric-desc">64MB I/O buffer + minimal overhead</div>
-                </div>
-                <div class="perf-metric">
-                    <div class="perf-metric-value">1-2 ms</div>
-                    <div class="perf-metric-label">Resume State Load</div>
-                    <div class="perf-metric-desc">Checkpoint restoration time</div>
-                </div>
+            <div class="perf-card">
+                <div class="perf-value">&lt;1%</div>
+                <div class="perf-label">Resume Overhead</div>
+                <div class="perf-desc">Checkpoint management cost</div>
             </div>
         </div>
 
         <div class="quality-badges">
-            <div class="badge">
-                <div class="badge-number">1,906</div>
-                <div class="badge-label">Lines of Code</div>
+            <div class="quality-badge">
+                <div class="quality-value">2,500+</div>
+                <div class="quality-label">Lines of Code</div>
             </div>
-            <div class="badge">
-                <div class="badge-number">26/26</div>
-                <div class="badge-label">Tests Passing</div>
+            <div class="quality-badge">
+                <div class="quality-value">20/20</div>
+                <div class="quality-label">Tests</div>
             </div>
-            <div class="badge">
-                <div class="badge-number">50%+</div>
-                <div class="badge-label">Coverage Achieved</div>
+            <div class="quality-badge">
+                <div class="quality-value">60%+</div>
+                <div class="quality-label">Coverage</div>
             </div>
-            <div class="badge">
-                <div class="badge-number">0</div>
-                <div class="badge-label">Build Warnings</div>
+            <div class="quality-badge">
+                <div class="quality-value">100%</div>
+                <div class="quality-label">Safe Rust</div>
             </div>
-            <div class="badge">
-                <div class="badge-number">A+</div>
-                <div class="badge-label">Code Quality</div>
+            <div class="quality-badge">
+                <div class="quality-value">0</div>
+                <div class="quality-label">Warnings</div>
             </div>
-            <div class="badge">
-                <div class="badge-number">100%</div>
-                <div class="badge-label">Safe Rust</div>
+            <div class="quality-badge">
+                <div class="quality-value">v0.3.0</div>
+                <div class="quality-label">Current</div>
             </div>
         </div>
     </section>
 
-    <!-- Comparison Section -->
-    <section class="section">
-        <h2 class="section-title">Feature Comparison</h2>
-        <p class="section-subtitle">vs Standard cp/mv</p>
-        
+    <!-- Comparison -->
+    <section class="comparison" id="comparison">
+        <div class="section-header">
+            <h2>How it compares</h2>
+            <p>Feature comparison with standard Unix tools.</p>
+        </div>
+
         <div class="comparison-table">
             <table>
                 <thead>
                     <tr>
                         <th>Feature</th>
                         <th>Standard cp</th>
-                        <th>BetterDefaultCPMV</th>
+                        <th>BetterCP</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Real-Time Progress</strong></td>
-                        <td><span class="cross">✗</span></td>
+                        <td>Real-time Progress</td>
+                        <td><span class="cross">✕</span></td>
                         <td><span class="check">✓</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Speed + ETA Metrics</strong></td>
-                        <td><span class="cross">✗</span></td>
+                        <td>Speed + ETA Metrics</td>
+                        <td><span class="cross">✕</span></td>
                         <td><span class="check">✓</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Resume Interrupted Transfers</strong></td>
-                        <td><span class="cross">✗</span></td>
+                        <td>Resume Transfers</td>
+                        <td><span class="cross">✕</span></td>
                         <td><span class="check">✓</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Overwrite Protection</strong></td>
-                        <td><span class="cross">✗</span></td>
+                        <td>Overwrite Protection</td>
+                        <td><span class="cross">✕</span></td>
                         <td><span class="check">✓</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Checksum Verification</strong></td>
-                        <td><span class="cross">✗</span></td>
+                        <td>Checksum Verification</td>
+                        <td><span class="cross">✕</span></td>
                         <td><span class="check">✓</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Dry-Run Mode</strong></td>
-                        <td><span class="cross">✗</span></td>
+                        <td>Move Operations</td>
+                        <td><span class="cross">✕</span></td>
                         <td><span class="check">✓</span></td>
                     </tr>
                     <tr>
-                        <td><strong>JSON Output</strong></td>
-                        <td><span class="cross">✗</span></td>
+                        <td>Parallel I/O</td>
+                        <td><span class="cross">✕</span></td>
                         <td><span class="check">✓</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Smart Error Messages</strong></td>
-                        <td><span class="cross">✗</span></td>
+                        <td>Reflink/CoW Support</td>
+                        <td><span class="cross">✕</span></td>
                         <td><span class="check">✓</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Atomic Operations</strong></td>
-                        <td><span class="cross">✗</span></td>
-                        <td><span class="check">✓</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Directory Recursion</strong></td>
-                        <td><span class="check">✓</span></td>
+                        <td>JSON Output</td>
+                        <td><span class="cross">✕</span></td>
                         <td><span class="check">✓</span></td>
                     </tr>
                 </tbody>
@@ -1050,85 +792,208 @@ Resume from [y/n]: y
         </div>
     </section>
 
-    <!-- Documentation Section -->
-    <section class="section" id="docs">
-        <h2 class="section-title">Documentation</h2>
-        <p class="section-subtitle">Comprehensive guides for every use case.</p>
-        
-        <div class="features-grid">
-            <div class="feature">
-                <div class="feature-icon">📖</div>
-                <h3>User Guide</h3>
-                <p>Complete documentation with examples, command reference, and best practices for daily use.</p>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">🏗️</div>
-                <h3>Architecture</h3>
-                <p>Detailed system design documentation explaining module interaction and design decisions.</p>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">🔧</div>
-                <h3>Development</h3>
-                <p>Setup instructions, build process, and contribution guidelines for developers.</p>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">✅</div>
-                <h3>Testing</h3>
-                <p>Test strategy, coverage metrics, and how to run the comprehensive test suite.</p>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">📋</div>
-                <h3>Changelog</h3>
-                <p>Complete version history with breaking changes, new features, and bug fixes.</p>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">⚡</div>
-                <h3>Quick Start</h3>
-                <p>Get up and running in 5 minutes with common use cases and examples.</p>
-            </div>
+    <!-- CTA -->
+    <section class="cta">
+        <div class="cta-inner">
+            <h2>Lightning-fast file transfer</h2>
+            <p>Download BetterCP Thunder Edition and experience the speed difference.</p>
+            <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/releases/tag/v0.3.0" class="btn btn-primary">Get Thunder Now</a>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <h2>Production Ready</h2>
-        <p>26/26 tests passing • 50%+ coverage • 0 build warnings • Code quality A+</p>
-        <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/releases/tag/v0.2.0" class="btn btn-primary">Download v0.2.0 Now</a>
-    </section>
+    <!-- Lightning Background -->
+    <canvas id="lightning-bg"></canvas>
 
     <!-- Footer -->
     <footer>
-        <div class="footer-container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Project</h4>
-                    <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV">GitHub</a>
-                    <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/releases">Releases</a>
-                    <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/blob/master/CHANGELOG.md">Changelog</a>
-                </div>
-                <div class="footer-section">
-                    <h4>Community</h4>
-                    <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/issues">Issues</a>
-                    <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/discussions">Discussions</a>
-                    <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV">Source Code</a>
-                </div>
-                <div class="footer-section">
-                    <h4>Documentation</h4>
-                    <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/blob/master/README.md">README</a>
-                    <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/blob/master/ARCHITECTURE.md">Architecture</a>
-                    <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/blob/master/DEVELOPMENT.md">Development</a>
-                </div>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Project</h4>
+                <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV">GitHub</a>
+                <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/releases">Releases</a>
+                <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/blob/master/CHANGELOG.md">Changelog</a>
             </div>
-            
-            <div class="footer-divider">
-                <p>BetterDefaultCPMV v0.2.0 • Apache License 2.0 • Production-Grade File Transfer Tool</p>
-                <p style="margin-top: 1rem;">Built with Rust • Async/Await • Zero Unsafe Code</p>
+            <div class="footer-section">
+                <h4>Documentation</h4>
+                <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/blob/master/README.md">README</a>
+                <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/blob/master/ARCHITECTURE.md">Architecture</a>
+                <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/blob/master/DEVELOPMENT.md">Development</a>
             </div>
+            <div class="footer-section">
+                <h4>Community</h4>
+                <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/issues">Issues</a>
+                <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV/discussions">Discussions</a>
+                <a href="https://github.com/nom-nom-hub/BetterDefaultCPMV">Source Code</a>
+            </div>
+        </div>
+        <div class="footer-divider">
+            <p>⚡ BetterCP Thunder (v0.3.0) • Apache License 2.0 • Built with Rust • Lightning-fast file transfer</p>
         </div>
     </footer>
 
     <script>
-        hljs.highlightAll();
+        class Raindrop {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.speed = 4 + Math.random() * 6;
+                this.opacity = Math.random() * 0.5 + 0.3;
+                this.angle = 0.3 + Math.random() * 0.2;
+            }
+
+            update() {
+                this.y += this.speed;
+                this.x += Math.sin(this.angle) * 0.5;
+
+                if (this.y > this.canvas.height) {
+                    this.y = -10;
+                    this.x = Math.random() * this.canvas.width;
+                }
+                if (this.x > this.canvas.width) {
+                    this.x = 0;
+                }
+                if (this.x < 0) {
+                    this.x = this.canvas.width;
+                }
+            }
+
+            draw(ctx) {
+                ctx.strokeStyle = `rgba(100, 150, 200, ${this.opacity})`;
+                ctx.lineWidth = 1.5;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x - Math.cos(this.angle) * 10, this.y + Math.sin(this.angle) * 10);
+                ctx.stroke();
+            }
+        }
+
+        class ThunderStorm {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                
+                this.raindrops = [];
+                this.initRain();
+                
+                this.lastStrike = 0;
+                this.strikeInterval = 3000 + Math.random() * 4000;
+                
+                this.animate();
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            initRain() {
+                this.raindrops = [];
+                const dropCount = Math.floor(this.canvas.width / 10);
+                for (let i = 0; i < dropCount; i++) {
+                    this.raindrops.push(new Raindrop(this.canvas));
+                }
+            }
+
+            createLightning(x, y, length, angle, branches) {
+                const endX = x + Math.cos(angle) * length;
+                const endY = y + Math.sin(angle) * length;
+
+                this.ctx.strokeStyle = `rgba(0, 217, 255, 0.9)`;
+                this.ctx.lineWidth = branches === 0 ? 3 : Math.max(0.5, 3 - branches * 0.4);
+                this.ctx.lineCap = 'round';
+                this.ctx.lineJoin = 'round';
+                this.ctx.shadowColor = 'rgba(0, 217, 255, 0.8)';
+                this.ctx.shadowBlur = 20;
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(x, y);
+                this.ctx.lineTo(endX, endY);
+                this.ctx.stroke();
+
+                // Glow effect
+                this.ctx.strokeStyle = `rgba(0, 217, 255, 0.4)`;
+                this.ctx.lineWidth = (branches === 0 ? 3 : Math.max(0.5, 3 - branches * 0.4)) + 6;
+                this.ctx.shadowBlur = 40;
+                this.ctx.beginPath();
+                this.ctx.moveTo(x, y);
+                this.ctx.lineTo(endX, endY);
+                this.ctx.stroke();
+
+                this.ctx.shadowColor = 'transparent';
+                this.ctx.shadowBlur = 0;
+
+                if (branches < 3 && Math.random() > 0.6) {
+                    const newAngle = angle + (Math.random() - 0.5) * 0.8;
+                    this.createLightning(endX, endY, length * 0.75, newAngle, branches + 1);
+                }
+            }
+
+            drawLightning() {
+                const startX = Math.random() * this.canvas.width;
+                const startY = Math.random() * (this.canvas.height * 0.4) - 100;
+                
+                // Main bolt
+                for (let i = 0; i < 3; i++) {
+                    const angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.3;
+                    this.createLightning(startX, startY, 400, angle, 0);
+                }
+
+                // Secondary bolts
+                if (Math.random() > 0.5) {
+                    for (let i = 0; i < 2; i++) {
+                        const x = startX + (Math.random() - 0.5) * 500;
+                        const y = startY + (Math.random() - 0.5) * 250;
+                        const angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.4;
+                        this.createLightning(x, y, 250, angle, 0);
+                    }
+                }
+            }
+
+            drawRain() {
+                for (let drop of this.raindrops) {
+                    drop.update();
+                    drop.draw(this.ctx);
+                }
+            }
+
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw rain
+                this.drawRain();
+                
+                // Lightning strikes
+                const now = Date.now();
+                if (now - this.lastStrike > this.strikeInterval) {
+                    this.lastStrike = now;
+                    this.strikeInterval = 3000 + Math.random() * 4000;
+
+                    const flashCount = Math.random() > 0.5 ? 2 : 1;
+                    for (let i = 0; i < flashCount; i++) {
+                        setTimeout(() => {
+                            const tempCanvas = document.createElement('canvas');
+                            tempCanvas.width = this.canvas.width;
+                            tempCanvas.height = this.canvas.height;
+                            const tempCtx = tempCanvas.getContext('2d');
+                            tempCtx.drawImage(this.canvas, 0, 0);
+                            this.drawLightning();
+                        }, i * 150);
+                    }
+                }
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // Initialize thunder storm
+        const canvas = document.getElementById('lightning-bg');
+        if (canvas) {
+            new ThunderStorm(canvas);
+        }
     </script>
 </body>
 </html>
