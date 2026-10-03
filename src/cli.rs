@@ -1,25 +1,11 @@
-use clap::{Parser, Subcommand, ValueEnum};
+use clap::{Parser, ValueEnum};
 use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
 #[command(name = "better-cp")]
-#[command(about = "Modern cp/mv with progress, safety, and resume", long_about = None)]
+#[command(about = "Modern cp with progress, safety, and resume", long_about = None)]
 #[command(version)]
-pub struct Cli {
-    #[command(subcommand)]
-    pub command: Commands,
-}
-
-#[derive(Subcommand, Debug)]
-pub enum Commands {
-    /// Copy files with progress and safety
-    Copy(CopyArgs),
-    /// Move files with progress and safety
-    Move(MoveArgs),
-}
-
-#[derive(Parser, Debug, Clone)]
-pub struct CopyArgs {
+pub struct CopyCli {
     /// Source file or directory (one or more)
     #[arg(required = true)]
     pub source: Vec<PathBuf>,
@@ -105,12 +91,17 @@ pub struct CopyArgs {
     pub interactive: bool,
 }
 
-#[derive(Parser, Debug, Clone)]
-pub struct MoveArgs {
-    /// Source file or directory
+#[derive(Parser, Debug)]
+#[command(name = "better-mv")]
+#[command(about = "Modern mv with progress, safety, and resume", long_about = None)]
+#[command(version)]
+pub struct MoveCli {
+    /// Source file or directory (one or more)
+    #[arg(required = true)]
     pub source: Vec<PathBuf>,
 
     /// Destination file or directory
+    #[arg(required = true)]
     pub destination: PathBuf,
 
     /// Overwrite behavior: never|prompt|always|smart
@@ -145,6 +136,10 @@ pub struct MoveArgs {
     #[arg(short, long, action = clap::ArgAction::SetTrue)]
     pub interactive: bool,
 }
+
+// Legacy aliases for backwards compatibility
+pub type CopyArgs = CopyCli;
+pub type MoveArgs = MoveCli;
 
 #[derive(Debug, Clone, ValueEnum)]
 pub enum OverwriteMode {

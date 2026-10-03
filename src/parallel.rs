@@ -91,7 +91,7 @@ impl ParallelFileCopier {
             .map_err(Error::Io)?;
 
         // Calculate chunk boundaries
-        let num_chunks = (total_size as usize + CHUNK_SIZE - 1) / CHUNK_SIZE;
+        let num_chunks = (total_size as usize).div_ceil(CHUNK_SIZE);
         let actual_threads = std::cmp::min(self.parallel_threads, num_chunks);
 
         let src_path = Arc::new(self.source.clone());
@@ -211,7 +211,7 @@ pub async fn parallel_copy_directory(
     ));
 
     // Split work among threads
-    let chunk_size = (files_to_copy.len() + parallel_threads - 1) / parallel_threads;
+    let chunk_size = files_to_copy.len().div_ceil(parallel_threads);
     let mut handles = Vec::new();
 
     for thread_idx in 0..parallel_threads {

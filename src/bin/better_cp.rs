@@ -1,6 +1,6 @@
 use clap::Parser;
 use console::style;
-use better_cp::cli::{Cli, Commands, CopyArgs};
+use better_cp::cli::CopyCli;
 use better_cp::copy::{FileCopier, copy_directory};
 use better_cp::parallel::{ParallelFileCopier, parallel_copy_directory};
 use better_cp::error::Result;
@@ -8,24 +8,17 @@ use std::time::Instant;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let cli = Cli::parse();
+    let args = CopyCli::parse();
 
-    match cli.command {
-        Commands::Copy(args) => {
-            if let Err(e) = handle_copy(args).await {
-                eprintln!("❌ {}", e.detailed_message());
-                std::process::exit(1);
-            }
-        }
-        Commands::Move(_args) => {
-            eprintln!("Move operation not yet implemented");
-        }
+    if let Err(e) = handle_copy(args).await {
+        eprintln!("❌ {}", e.detailed_message());
+        std::process::exit(1);
     }
 
     Ok(())
 }
 
-async fn handle_copy(args: CopyArgs) -> Result<()> {
+async fn handle_copy(args: CopyCli) -> Result<()> {
     if args.source.is_empty() {
         eprintln!("Error: no source specified");
         return Ok(());
@@ -168,7 +161,7 @@ async fn handle_copy(args: CopyArgs) -> Result<()> {
     Ok(())
 }
 
-async fn dry_run_preview(args: &CopyArgs) -> Result<()> {
+async fn dry_run_preview(args: &CopyCli) -> Result<()> {
     use better_cp::prompt;
     use std::fs;
     
@@ -251,12 +244,12 @@ fn calculate_dir_size(path: &std::path::Path) -> Result<(usize, u64)> {
     let mut total_size = 0;
     
     let entries = fs::read_dir(path)
-        .map_err(|e| better_cp::error::Error::Io(e))?;
+        .map_err(better_cp::error::Error::Io)?;
     
     for entry in entries {
-        let entry = entry.map_err(|e| better_cp::error::Error::Io(e))?;
+        let entry = entry.map_err(better_cp::error::Error::Io)?;
         let metadata = entry.metadata()
-            .map_err(|e| better_cp::error::Error::Io(e))?;
+            .map_err(better_cp::error::Error::Io)?;
         
         if metadata.is_file() {
             file_count += 1;

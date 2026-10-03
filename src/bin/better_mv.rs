@@ -1,30 +1,23 @@
 use clap::Parser;
 use console::style;
-use better_cp::cli::{Cli, Commands, MoveArgs};
+use better_cp::cli::MoveCli;
 use better_cp::r#move::{FileMover, move_directory};
 use better_cp::error::Result;
 use std::time::Instant;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let cli = Cli::parse();
+    let args = MoveCli::parse();
 
-    match cli.command {
-        Commands::Move(args) => {
-            if let Err(e) = handle_move(args).await {
-                eprintln!("❌ {}", e.detailed_message());
-                std::process::exit(1);
-            }
-        }
-        Commands::Copy(_) => {
-            eprintln!("Use better-cp for copy operations");
-        }
+    if let Err(e) = handle_move(args).await {
+        eprintln!("❌ {}", e.detailed_message());
+        std::process::exit(1);
     }
 
     Ok(())
 }
 
-async fn handle_move(args: MoveArgs) -> Result<()> {
+async fn handle_move(args: MoveCli) -> Result<()> {
     if args.source.is_empty() {
         eprintln!("Error: no source specified");
         return Ok(());
@@ -114,7 +107,7 @@ async fn handle_move(args: MoveArgs) -> Result<()> {
     Ok(())
 }
 
-async fn dry_run_preview(args: &MoveArgs) -> Result<()> {
+async fn dry_run_preview(args: &MoveCli) -> Result<()> {
     use std::fs;
 
     if args.source.len() == 1 {
@@ -205,12 +198,12 @@ fn calculate_dir_size(path: &std::path::Path) -> Result<(usize, u64)> {
     let mut total_size = 0;
 
     let entries = fs::read_dir(path)
-        .map_err(|e| better_cp::error::Error::Io(e))?;
+        .map_err(better_cp::error::Error::Io)?;
 
     for entry in entries {
-        let entry = entry.map_err(|e| better_cp::error::Error::Io(e))?;
+        let entry = entry.map_err(better_cp::error::Error::Io)?;
         let metadata = entry.metadata()
-            .map_err(|e| better_cp::error::Error::Io(e))?;
+            .map_err(better_cp::error::Error::Io)?;
 
         if metadata.is_file() {
             file_count += 1;
